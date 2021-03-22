@@ -29,18 +29,24 @@ def adjust_gamma(crop_img, gamma=1.0):
 
 # This is the "start" function that will process all images in the dataset
 def process_all_images():
-    directory = "./dataset"
-    # # FOR TESTING PURPOSES: one image at a time
-    img = cv2.imread("./dataset/frame8.tiff")
-    detect_mouse(img)
+    directory = "./fm_dataset"
 
-    # # For running: multiple images at a time
-    # for filename in os.listdir(directory):
-    #     if filename.endswith(".tiff"):
-    #         filepath = os.path.join(directory, filename).replace("\\", "/")
-    #         print(filepath)
-    #         img = cv2.imread(filepath)
-    #         detect_mouse(img)
+    # ## FOR TESTING PURPOSES: one image at a time
+    # global img_name
+    # img = cv2.imread("./fm_dataset/frame0.tiff")
+    # # Saving frame name for future reference
+    # img_name = "frame0"
+    # detect_mouse(img)
+
+    # For running: multiple images at a time
+    for filename in os.listdir(directory):
+        if filename.endswith(".tiff"):
+            global img_name
+            img_name = filename
+            filepath = os.path.join(directory, filename).replace("\\", "/")
+            print(filepath)
+            img = cv2.imread(filepath)
+            detect_mouse(img)
 
 
 # This function will detect where the cursor position is in the screenshot and return the x and y coordinates
@@ -108,7 +114,6 @@ def crop_hover_list(img, cursor_coord_x, cursor_coord_y):
     # cv2.imshow("Hover List: Contours", img_hover_list)
     # cv2.imshow("Hover List: Dilated", dilated)
     # cv2.waitKey(0)
-
 
     for contour in contours:
         # Contour area determines what it will contour/crop
@@ -278,27 +283,36 @@ def process_hover_popup(item_list_name, item_list_price):
     # process to make it easier to read text
     ret, thresh_name = cv2.threshold(dst_name,136,255,cv2.THRESH_BINARY)
 
-    canny = cv2.Canny(image_hover, 0, 150)
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    dilated = cv2.dilate(canny, kernel)
-    contours, hierarchy = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    cv2.drawContours(dilated, contours, -1, (0,255,0), 2)
+    # canny = cv2.Canny(image_hover, 0, 150)
+    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10, 10))
+    # dilated = cv2.dilate(canny, kernel)
+    # contours, hierarchy = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    # cv2.drawContours(dilated, contours, -1, (0,255,0), 2)
 
-    cv2.imshow("Hover: Canny", canny)
-    cv2.imshow("Hover: Kernel", kernel)
-    cv2.imshow("Hover: Dilated", dilated)
+    blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
+    thresh = cv2.threshold(blur, 45, 255, cv2.THRESH_BINARY_INV)[1]
+    thresh = cv2.erode(thresh, None, iterations=5)
+    thresh = cv2.dilate(thresh, None, iterations=5)
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    cv2.drawContours(thresh, contours, -1, (0,255,0), 2)
+
+    # cv2.imshow("Hover: Thresh", thresh)
+    # cv2.imshow("Hover: Canny", canny)
+    # cv2.imshow("Hover: Dilated", dilated)
     cv2.waitKey(0)
 
     for contour in contours:
-        if cv2.contourArea(contour) < 20000 or cv2.contourArea(contour) > 70000:
-             continue
+        if cv2.contourArea(contour) < 20000 or cv2.contourArea(contour) > 50000:
+            global no_stats
+            no_stats = "true"
+            continue
         # Contour area determines what it will contour/crop
-        # print(cv2.contourArea(contour))
+        print(cv2.contourArea(contour))
         # # Show bounding box
         (x,y,w,h) = cv2.boundingRect(contour)
-        # cv2.rectangle(image_hover, (x, y), (x + w, y + h), (0, 0, 255), 3)
-        cv2.imshow("Hover List: Crop", image_hover)
-        cv2.waitKey(0)
+        cv2.rectangle(image_hover, (x, y), (x + w, y + h), (0, 0, 255), 3)
+        # cv2.imshow("Hover List: Crop", image_hover)
+        # cv2.waitKey(0)
         # Grab coordinates for the box to crop
         ext_left = tuple(contour[contour[:, :, 0].argmin()][0])
         ext_right = tuple(contour[contour[:, :, 0].argmax()][0])
@@ -310,80 +324,116 @@ def process_hover_popup(item_list_name, item_list_price):
         box = cv2.boxPoints(rect)
         roi_corners = np.array([box], dtype=np.int32)
         cv2.polylines(image_hover, roi_corners, 1, (255, 0, 0), 3)
-        cv2.imshow('Hover List: Crop', image_hover)
-        cv2.waitKey(0)
+        # cv2.imshow('Hover List: Crop', image_hover)
+        # cv2.waitKey(0)
         cropped_image_stats = img_gray[ext_top[1]:ext_bot[1], ext_left[0]:ext_right[0]]
         cv2.imwrite('hover_popup_stats.tiff', cropped_image_stats)
 
-    # Grabs box of hover popup and resizes
-    stats_hover = cv2.imread("hover_popup_stats.tiff")
-    stats_gray = cv2.cvtColor(stats_hover, cv2.COLOR_BGR2GRAY)
-    image_stats = cv2.resize(stats_gray, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
+    # Non-equips/weapons do not need stats - remove entirely.
+    if(no_stats == "true"):
+        # Grabs box of hover popup and resizes
+        stats_hover = cv2.imread("hover_popup_stats.tiff")
+        stats_gray = cv2.cvtColor(stats_hover, cv2.COLOR_BGR2GRAY)
+        image_stats = cv2.resize(stats_gray, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
 
-    # pre-processing STATS image
-    adjusted_stats = adjust_gamma(image_stats, gamma=3.3)
-    # denoising NAME image
-    dst_stats = cv2.fastNlMeansDenoising(adjusted_stats, None, 2, 2, 2)
-    # process to make it easier to read text
-    ret, thresh_stats = cv2.threshold(dst_stats,136,255,cv2.THRESH_BINARY)
+        # pre-processing STATS image
+        adjusted_stats = adjust_gamma(image_stats, gamma=3.3)
+        # denoising NAME image
+        dst_stats = cv2.fastNlMeansDenoising(adjusted_stats, None, 2, 2, 2)
+        # process to make it easier to read text
+        ret, thresh_stats = cv2.threshold(dst_stats,136,255,cv2.THRESH_BINARY)
 
-    # OCR configurations (3 is default)
-    config = "--psm 6"
+        # OCR configurations (3 is default)
+        config = "--psm 6"
 
-    # Just show the name image
-    cv2.imshow("name", image_name)
-    cv2.imshow("dst_name", dst_name)
-    cv2.imshow("thresh_name", thresh_name)
-    cv2.waitKey(0)
-    # Just show the stats image
-    cv2.imshow("stats", image_stats)
-    cv2.imshow("dst_stats", dst_stats)
-    cv2.imshow("thresh_stats", thresh_stats)
-    cv2.waitKey(0)
+        # # Just show the name image
+        # cv2.imshow("name", image_name)
+        # cv2.imshow("dst_name", dst_name)
+        # cv2.imshow("thresh_name", thresh_name)
+        # cv2.waitKey(0)
+        # # Just show the stats image
+        # cv2.imshow("stats", image_stats)
+        # cv2.imshow("dst_stats", dst_stats)
+        # cv2.imshow("thresh_stats", thresh_stats)
+        # cv2.waitKey(0)
 
-    text_name = pytesseract.image_to_string(thresh_name, lang='maple', config=config)
-    text_stats = pytesseract.image_to_string(thresh_stats, lang='maple', config=config)
-    # Text_name and text_stats before processing
-    print("Detected text")
-    print(text_name)
-    print(text_stats)
+        text_name = pytesseract.image_to_string(thresh_name, lang='maple', config=config)
+        text_stats = pytesseract.image_to_string(thresh_stats, lang='maple', config=config)
+        # Text_name and text_stats before processing
+        print("Detected text")
+        print(text_name)
+        print(text_stats)
 
-    # processing NAME text
-    # removing empty lines
-    lines_name = text_name.split("\n")
-    non_empty_lines_name = [line for line in lines_name if line.strip() != ""]
-    string_without_empty_lines_name = ""
-    for line in non_empty_lines_name:
-        string_without_empty_lines_name += line + "\n"
-    # replace anything that is not properly formatted
-    string_without_specialchars_name = re.sub('[^a-zA-Z0-9\s(\)+%]', '', string_without_empty_lines_name)
-    # grabs first string and regex to split capital letters
-    item_hover_name = string_without_specialchars_name.partition('\n')[0].strip()
+        # processing NAME text
+        # removing empty lines
+        lines_name = text_name.split("\n")
+        non_empty_lines_name = [line for line in lines_name if line.strip() != ""]
+        string_without_empty_lines_name = ""
+        for line in non_empty_lines_name:
+            string_without_empty_lines_name += line + "\n"
+        # replace anything that is not properly formatted
+        string_without_specialchars_name = re.sub('[^a-zA-Z0-9\s(\)+%]', '', string_without_empty_lines_name)
+        # grabs first string and regex to split capital letters
+        item_hover_name = string_without_specialchars_name.partition('\n')[0].strip()
 
-    # processing STATS text
-    # removing empty lines
-    lines_stats = text_stats.split("\n")
-    non_empty_lines_stats = [line for line in lines_stats if line.strip() != ""]
-    string_without_empty_lines_stats = ""
-    for line in non_empty_lines_stats:
-        string_without_empty_lines_stats += line + "\n"
-    # replace anything that is not properly formatted
-    string_without_specialchars_stats = re.sub('[^a-zA-Z0-9\s(\)+%:]', '', string_without_empty_lines_stats)
-    # grabs first string and regex to split capital letters
-    item_hover_stats = string_without_specialchars_stats.replace('\n', ', ')
-    # print(item_hover_stats)
-    save_item(item_list_name, item_list_price, item_hover_name, item_hover_stats)
+        # processing STATS text
+        # removing empty lines
+        lines_stats = text_stats.split("\n")
+        non_empty_lines_stats = [line for line in lines_stats if line.strip() != ""]
+        string_without_empty_lines_stats = ""
+        for line in non_empty_lines_stats:
+            string_without_empty_lines_stats += line + "\n"
+        # replace anything that is not properly formatted
+        string_without_specialchars_stats = re.sub('[^a-zA-Z0-9\s(\)+%:]', '', string_without_empty_lines_stats)
+        # grabs first string and regex to split capital letters
+        item_hover_stats = string_without_specialchars_stats.replace('\n', ', ')
+        # print(item_hover_stats)
+        save_item(item_list_name, item_list_price, item_hover_name, item_hover_stats)
+
+    else:
+        # OCR configurations (3 is default)
+        config = "--psm 6"
+
+        # # Just show the name image
+        # cv2.imshow("name", image_name)
+        # cv2.imshow("dst_name", dst_name)
+        # cv2.imshow("thresh_name", thresh_name)
+        # cv2.waitKey(0)
+
+        text_name = pytesseract.image_to_string(thresh_name, lang='maple', config=config)
+        text_stats = "NO STATS"
+        # Text_name and text_stats before processing
+        print("Detected text")
+        print(text_name)
+        print(text_stats)
+
+        # processing NAME text
+        # removing empty lines
+        lines_name = text_name.split("\n")
+        non_empty_lines_name = [line for line in lines_name if line.strip() != ""]
+        string_without_empty_lines_name = ""
+        for line in non_empty_lines_name:
+            string_without_empty_lines_name += line + "\n"
+        # replace anything that is not properly formatted
+        string_without_specialchars_name = re.sub('[^a-zA-Z0-9\s(\)+%]', '', string_without_empty_lines_name)
+        # grabs first string and regex to split capital letters
+        item_hover_name = string_without_specialchars_name.partition('\n')[0].strip()
+
+        item_hover_stats = text_stats
+        # print(item_hover_stats)
+        save_item(item_list_name, item_list_price, item_hover_name, item_hover_stats)
 
 # This function will save the item NAME, PRICE, AND STATS into a txt file AND csv
 def save_item(item_list_name, item_list_price, item_hover_name, item_hover_stats):
+    global img_name
     print("FINAL: Saving item list name, item list price, item hover name, and item hover stats")
     if item_list_name == item_hover_name:
         # Storing text into txt file
         with open('rawtext.txt', 'a') as f:
-            print(item_hover_name + "|" + item_list_price + "|" + item_hover_stats, file=f)
+            print(item_hover_name + "|" + item_list_price + "|" + item_hover_stats + "|" + img_name, file=f)
 
         # combining into csv
-        dataset = pd.read_csv('rawtext.txt', names=['Item Name', 'Price Read', 'Item Stats'], delimiter='|')
+        dataset = pd.read_csv('rawtext.txt', names=['Item Name', 'Price Read', 'Item Stats', 'Frame Name'], delimiter='|')
         # dataset = dataset.groupby('Item Name').agg({'Price Read': lambda x: ' '.join(x)})
         print(dataset)
         dataset.to_csv(r'items.csv')
@@ -393,14 +443,12 @@ def save_item(item_list_name, item_list_price, item_hover_name, item_hover_stats
         print(item_list_name + " " + item_hover_name)
         # Storing text into txt file
         with open('rawtext.txt', 'a') as f:
-            print(item_hover_name + "|" + item_list_price + "|" + item_hover_stats, file=f)
+            print(item_hover_name + "|" + item_list_price + "|" + item_hover_stats + "|" + img_name, file=f)
 
         # combining into csv
-        dataset = pd.read_csv('rawtext.txt', names=['Item Name', 'Price Read', 'Item Stats'], delimiter='|')
+        dataset = pd.read_csv('rawtext.txt', names=['Item Name', 'Price Read', 'Item Stats', 'Frame Name'], delimiter='|')
         # dataset = dataset.groupby('Item Name').agg({'Price Read': lambda x: ' '.join(x)})
         print(dataset)
         dataset.to_csv(r'items.csv')
 
-
-#detect_mouse()
 process_all_images()

@@ -1,0 +1,14 @@
+ePinaka|1 for 122,859 mesos|I i,   CATEGORY : CLAW , h:  ATTACK SPEED : FAST, a) LUX: +6, I  WEAPON ATTACK: 56,  WEAPON OEF:9, ly  NUMBER OF UPGRADES AVAILABLE : 7, Pry pgp h RE WY  RP  Ear gp, |frame10.tiff
+Flamekeeper Cordon|25,009,000 mesos|I i,   CATEGORY : CLAW , h:  ATTACK SPEED : FAST, a) LUX: +6, I  WEAPON ATTACK: 56,  WEAPON OEF:9, ly  NUMBER OF UPGRADES AVAILABLE : 7, Pry pgp h RE WY  RP  Ear gp, |frame22.tiff
+Mastery Book Genesis|1 for 705,000,000 mesos|I i,   CATEGORY : CLAW , h:  ATTACK SPEED : FAST, a) LUX: +6, I  WEAPON ATTACK: 56,  WEAPON OEF:9, ly  NUMBER OF UPGRADES AVAILABLE : 7, Pry pgp h RE WY  RP  Ear gp, |frame26.tiff
+Mushmom Eraser|N/A|I i,   CATEGORY : CLAW , h:  ATTACK SPEED : FAST, a) LUX: +6, I  WEAPON ATTACK: 56,  WEAPON OEF:9, ly  NUMBER OF UPGRADES AVAILABLE : 7, Pry pgp h RE WY  RP  Ear gp, |frame32.tiff
+Tao of Sight|N/A|I i,   CATEGORY : CLAW , h:  ATTACK SPEED : FAST, a) LUX: +6, I  WEAPON ATTACK: 56,  WEAPON OEF:9, ly  NUMBER OF UPGRADES AVAILABLE : 7, Pry pgp h RE WY  RP  Ear gp, |frame34.tiff
+eo Red Arcina|N/A|I i,   CATEGORY : CLAW , h:  ATTACK SPEED : FAST, a) LUX: +6, I  WEAPON ATTACK: 56,  WEAPON OEF:9, ly  NUMBER OF UPGRADES AVAILABLE : 7, Pry pgp h RE WY  RP  Ear gp, |frame35.tiff
+Elemental Wand 6|N/A|I i,   CATEGORY : CLAW , h:  ATTACK SPEED : FAST, a) LUX: +6, I  WEAPON ATTACK: 56,  WEAPON OEF:9, ly  NUMBER OF UPGRADES AVAILABLE : 7, Pry pgp h RE WY  RP  Ear gp, |frame4.tiff
+o Balin obe foi Men (+7Male)|N/A|BR  CATEGORY :OVERALL , y IEE 1:8K 2 Xi h, 1 HP: +9 eo,  WEAPON DEF : 29 i ,  + SPEED : +10 A,  NUMBER OF UPGRADES AVAILABLE : O hs, WP IL NaET, |frame43.tiff
+Zombies Lost Tooth|N/A|BR  CATEGORY :OVERALL , y IEE 1:8K 2 Xi h, 1 HP: +9 eo,  WEAPON DEF : 29 i ,  + SPEED : +10 A,  NUMBER OF UPGRADES AVAILABLE : O hs, WP IL NaET, |frame46.tiff
+Ld Maple Claw (+4|15,999,929 mesos|BR  CATEGORY :OVERALL , y IEE 1:8K 2 Xi h, 1 HP: +9 eo,  WEAPON DEF : 29 i ,  + SPEED : +10 A,  NUMBER OF UPGRADES AVAILABLE : O hs, WP IL NaET, |frame48.tiff
+e Dark Pirate Top (Male)|N/A|BR  CATEGORY :OVERALL , y IEE 1:8K 2 Xi h, 1 HP: +9 eo,  WEAPON DEF : 29 i ,  + SPEED : +10 A,  NUMBER OF UPGRADES AVAILABLE : O hs, WP IL NaET, |frame52.tiff
+RedChristinas Sock (+1)|N/A|BR  CATEGORY :OVERALL , y IEE 1:8K 2 Xi h, 1 HP: +9 eo,  WEAPON DEF : 29 i ,  + SPEED : +10 A,  NUMBER OF UPGRADES AVAILABLE : O hs, WP IL NaET, |frame54.tiff
+Dark Scroll for Claw for ATT 30%|1 for 18,999,9399 mesos|BR  CATEGORY :OVERALL , y IEE 1:8K 2 Xi h, 1 HP: +9 eo,  WEAPON DEF : 29 i ,  + SPEED : +10 A,  NUMBER OF UPGRADES AVAILABLE : O hs, WP IL NaET, |frame58.tiff
+e Mapl Havoc Hammer (+5)|N/A|BR  CATEGORY :OVERALL , y IEE 1:8K 2 Xi h, 1 HP: +9 eo,  WEAPON DEF : 29 i ,  + SPEED : +10 A,  NUMBER OF UPGRADES AVAILABLE : O hs, WP IL NaET, |frame60.tiff
