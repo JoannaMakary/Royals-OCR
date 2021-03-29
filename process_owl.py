@@ -35,24 +35,24 @@ def adjust_gamma(crop_img, gamma=1.0):
 def process_all_images():
     directory = "./owl_dataset"
 
-    ## FOR TESTING PURPOSES: one image at a time
-    global img_name
-    img = cv2.imread("./owl_dataset/frame10.tiff")
-    # Saving frame name for future reference
-    img_name = "frame10"
-    process_owl(img)
-    if(hoverable == "false"):
-        calculate_price()
+    # ## FOR TESTING PURPOSES: one image at a time
+    # global img_name
+    # img = cv2.imread("./owl_dataset/frame10.tiff")
+    # # Saving frame name for future reference
+    # img_name = "frame10"
+    # process_owl(img)
+    # if(hoverable == "false"):
+    #     calculate_price()
 
-    # # # For running: multiple images at a time
-    # for filename in os.listdir(directory):
-    #     if filename.endswith(".tiff"):
-    #         global img_name
-    #         img_name = filename
-    #         filepath = os.path.join(directory, filename).replace("\\", "/")
-    #         print(filepath)
-    #         img = cv2.imread(filepath)
-    #         process_owl(img)
+    # # For running: multiple images at a time
+    for filename in os.listdir(directory):
+        if filename.endswith(".tiff"):
+            global img_name
+            img_name = filename
+            filepath = os.path.join(directory, filename).replace("\\", "/")
+            print(filepath)
+            img = cv2.imread(filepath)
+            process_owl(img)
 
 # This function will check whether it is a regular item or needs further processing (hovered)
 def process_owl(img):
@@ -172,7 +172,7 @@ def hovered_item(owl_item_prices, owl_item_name):
     loc = np.where(res >= threshold)
     # Draw a rectangle around the matched region.
     for pt in zip(*loc[::-1]):
-        # cv2.rectangle(owl_item_prices, pt, (pt[0] + w, pt[1] + h), (0, 255, 255), 2)
+        cv2.rectangle(owl_item_prices, pt, (pt[0] + w, pt[1] + h), (0, 255, 255), 2)
         print("")
     # Show the final image with the matched area.
     # cv2.imshow('Detected Cursor', owl_item_prices)
@@ -181,7 +181,9 @@ def hovered_item(owl_item_prices, owl_item_name):
     cursor_coord_y = pt[1]
 
     # crop to get the individual item price
-    indiv_item_price = owl_item_prices[cursor_coord_y - 35:cursor_coord_y + 60, cursor_coord_x - 680:cursor_coord_x - 265]
+    # indiv_item_price = owl_item_prices[cursor_coord_y - 35:cursor_coord_y + 60,
+    #                    cursor_coord_x - 680:cursor_coord_x - 265]
+    indiv_item_price = owl_item_prices[cursor_coord_y - 15:cursor_coord_y + 60, cursor_coord_x - 680:cursor_coord_x - 265]
     # pre-process item price
     adjusted_price = adjust_gamma(indiv_item_price, gamma=0.5)
     blur_price = cv2.GaussianBlur(adjusted_price, (5, 5), 0)
